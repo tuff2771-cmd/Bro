@@ -1,13 +1,14 @@
 #pragma once
 #include "Config.hpp"
 
-class OptionsPopup : public geode::Popup<int> {
+class OptionsPopup : public geode::Popup {
 protected:
     int m_idx = 0;
 
-    bool setup(int idx) override {
-        m_idx = idx;
+    bool init(int idx) {
         auto const& c = cfg::cheats()[idx];
+        if (!Popup::init(320.f, 65.f + c.fields.size() * 26.f, "square02_001.png")) return false;
+        m_idx = idx;
         this->setTitle(c.label.c_str());
         m_bgSprite->setColor({0, 0, 0});
         m_bgSprite->setOpacity(245);
@@ -67,9 +68,8 @@ protected:
 
 public:
     static OptionsPopup* create(int idx) {
-        auto n = cfg::cheats()[idx].fields.size();
         auto ret = new OptionsPopup();
-        if (ret->initAnchored(320.f, 65.f + n * 26.f, idx, "square02_001.png")) {
+        if (ret->init(idx)) {
             ret->autorelease();
             return ret;
         }
@@ -78,9 +78,10 @@ public:
     }
 };
 
-class CheatsPopup : public geode::Popup<> {
+class CheatsPopup : public geode::Popup {
 protected:
-    bool setup() override {
+    bool init() {
+        if (!Popup::init(440.f, 290.f, "square02_001.png")) return false;
         this->setTitle("Gameplay");
         m_bgSprite->setColor({0, 0, 0});
         m_bgSprite->setOpacity(245);
@@ -127,7 +128,7 @@ protected:
 public:
     static CheatsPopup* create() {
         auto ret = new CheatsPopup();
-        if (ret->initAnchored(440.f, 290.f, "square02_001.png")) {
+        if (ret->init()) {
             ret->autorelease();
             return ret;
         }
